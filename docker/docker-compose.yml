@@ -1,0 +1,36 @@
+version: '3'
+services:
+  todoback:
+    # build: irá construir nova imagem, no entanto nos requisitos anteriores a imagem já foi criada.
+    image: todobackend
+    restart: on-failure
+    ports:
+      - 3001:3001
+    networks:
+      - network-1
+  
+  todofront:
+    image: todofrontend
+    restart: on-failure
+    ports:
+      - 3000:3000
+    environment:
+    - REACT_APP_API_HOST=todoback
+    depends_on:
+      - todoback
+    networks:
+      - network-1
+  
+  todotests:
+    image: todotests
+    restart: on-failure
+    environment:
+      - FRONT_HOST=todofront
+    depends_on:
+      - todoback
+      - todofront
+    networks:
+      - network-1
+
+networks:
+  network-1:
